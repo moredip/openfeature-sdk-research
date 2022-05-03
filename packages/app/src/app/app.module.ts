@@ -8,14 +8,13 @@ import {
 } from '@openfeature/extra';
 import { openfeature } from '@openfeature/openfeature-js';
 import { Request } from 'express';
-import { AppController } from './api.controller';
+import { DemoController } from './demo.controller';
 import { TransactionContextMiddleware } from './attribute.middleware';
-import { BasicStrategy } from './basic.strategy';
 import { OPENFEATURE_CLIENT, REQUEST_DATA } from './constants';
-import { HelloService } from './hello/hello.service';
+import { HexColorService } from './hex-color/hex-color.service';
 import { InstallService } from './install/install.service';
 import { MessageService } from './message/message.service';
-import { Attributes, User } from './types';
+import { RequestData, User } from './types';
 import { UserService } from './user.service';
 
 // register a global hook
@@ -26,14 +25,12 @@ openfeature.registerTransactionContextPropagator(
 
 @Module({
   imports: [PassportModule],
-  controllers: [AppController],
+  controllers: [DemoController],
   providers: [
-    BasicStrategy,
     MessageService,
-    BasicStrategy,
     UserService,
     InstallService,
-    HelloService,
+    HexColorService,
     {
       provide: OPENFEATURE_CLIENT,
       useFactory: () => {
@@ -43,12 +40,12 @@ openfeature.registerTransactionContextPropagator(
     },
     {
       provide: REQUEST_DATA,
-      useFactory: (req: Request, userService: UserService): Attributes => {
+      useFactory: (req: Request, userService: UserService): RequestData => {
         return {
           ip:
             (req.headers['x-forwarded-for'] as string) ||
             (req.socket.remoteAddress as string),
-
+          email: req.header('Authorization'),
           method: req.method,
           path: req.path,
           userId: (userService.user as User)?.username,
@@ -64,6 +61,6 @@ openfeature.registerTransactionContextPropagator(
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(TransactionContextMiddleware).forRoutes(AppController);
+    consumer.apply(TransactionContextMiddleware).forRoutes(DemoController);
   }
 }

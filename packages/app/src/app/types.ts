@@ -1,11 +1,12 @@
 import { Context } from '@openfeature/openfeature-js';
 
-export type Attributes = {
+export type RequestData = {
   userId: string;
   ip: string;
   method: string;
   path: string;
   platform: string;
+  email?: string;
 };
 
 export interface User {

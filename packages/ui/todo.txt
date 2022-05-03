@@ -1,0 +1,7 @@
+- update fonticon
+- update title
+- make tour steps trim color more neutral?
+- reduce css duplication
+- add more comments
+- replace lambdas with methods
+- split out flag data calls from demo-specific stuff (PUTing and GETing JSON)
